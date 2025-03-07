@@ -1,31 +1,31 @@
-class User:
-    def __init__(self, db, username, role):
+class agent:
+    def __init__(self, db, agentname, role):
         self.db = db
-        self.username = username
-        self.role = role  # 'Administrator', 'Manager', 'User'
+        self.agentname = agentname
+        self.role = role  # 'admin', 'manager', 'agent'
     
     @staticmethod
-    def create_root_user(db):
-        query = "SELECT COUNT(*) FROM users WHERE role = 'Administrator'"
+    def create_root_agent(db):
+        query = "SELECT COUNT(*) FROM agents WHERE role = 'admin'"
         count = db.fetchone(query)[0]
         if count == 0:
-            query = "INSERT INTO users (username, role) VALUES (%s, %s)"
-            db.execute(query, ('root', 'Administrator'))
-            print("Root administrator user created successfully.")
+            query = "INSERT INTO agents (agentname, role) VALUES (%s, %s)"
+            db.execute(query, ('root', 'admin'))
+            print("Root admin agent created successfully.")
         else:
-            print("Administrator already exists.")
+            print("admin already exists.")
     
-    def create_user(self, new_username, new_role):
-        if self.role != 'Administrator':
-            print("Access Denied: Only administrators can create users.")
+    def create_agent(self, new_agentname, new_role):
+        if self.role != 'admin':
+            print("Access Denied: Only admins can create agents.")
             return
-        query = "INSERT INTO users (username, role) VALUES (%s, %s)"
-        self.db.execute(query, (new_username, new_role))
-        print(f"User {new_username} created with role {new_role}.")
+        query = "INSERT INTO agents (agentname, role) VALUES (%s, %s)"
+        self.db.execute(query, (new_agentname, new_role))
+        print(f"agent {new_agentname} created with role {new_role}.")
     
     def delete_car(self, branch_id, car_id):
-        if self.role not in ['Administrator', 'Manager']:
-            print("Access Denied: Only administrators and managers can delete cars.")
+        if self.role not in ['admin', 'manager']:
+            print("Access Denied: Only admins and managers can delete cars.")
             return
         table_name = f"cars_branch_{branch_id}"
         query = f"DELETE FROM {table_name} WHERE id = %s"
@@ -33,8 +33,8 @@ class User:
         print(f"Car with ID {car_id} deleted from branch {branch_id}.")
     
     def add_car(self, branch_id, brand, model, year, price, status, description):
-        if self.role not in ['Administrator', 'Manager']:
-            print("Access Denied: Only administrators and managers can add cars.")
+        if self.role not in ['admin', 'manager']:
+            print("Access Denied: Only admins and managers can add cars.")
             return
         table_name = f"cars_branch_{branch_id}"
         query = f"INSERT INTO {table_name} (brand, model, year, price, status, description) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -42,7 +42,7 @@ class User:
         print(f"Car {brand} {model} added to branch {branch_id}!")
     
     def search_car(self, brand, model, num_branches=3):
-        if self.role not in ['Administrator', 'Manager', 'User']:
+        if self.role not in ['admin', 'manager', 'agent']:
             print("Access Denied: Invalid role.")
             return
         results = []
