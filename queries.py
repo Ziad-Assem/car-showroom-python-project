@@ -1,4 +1,17 @@
 ###########################################
+########## General DB Queries #############
+###########################################
+
+def check_table_exists_query(branch):
+    return f"""
+    SELECT COUNT(*) > 0 AS table_exists 
+    FROM INFORMATION_SCHEMA.TABLES 
+    WHERE TABLE_NAME LIKE {"%"+branch+"%"};
+"""
+
+
+
+###########################################
 ############ USERS TABLE ##################
 ###########################################
 
@@ -59,22 +72,25 @@ def create_cars_table_query(branch):
 #add car
 def add_car_query(branch, brand, model, car_type, color, price, min_price, stock):
     return f"""
-    INSERT INTO cars_{branch} (brand, model, type, color, price, min_price, stock)
+    INSERT INTO {"cars_"+branch} (brand, model, type, color, price, min_price, stock)
     VALUES ('{brand}', '{model}', '{car_type}', '{color}', {price}, {min_price}, {stock});
     """
 
 #get all cars
 def get_all_cars_query(branch):
-    return f"SELECT * FROM cars_{branch};"
+    return f"SELECT * FROM {"cars_"+branch};"
 
 #delete car
 def delete_car_query(branch, car_id):
-    return f"DELETE FROM cars_{branch} WHERE id = {car_id};"
+    return f"DELETE FROM {"cars_"+branch} WHERE id = {car_id};"
 
 #search car
 def search_car_query(branch, field, value):
-    return f"SELECT * FROM cars_{branch} WHERE {field} = '{value}';"
+    return f"SELECT * FROM {"cars_"+branch} WHERE {field} = '{value}';"
 
+#search car by id
+def get_car_by_id_query(branch, car_id):
+    return f"SELECT * FROM cars_{branch} WHERE id = {car_id};"
 
 ###########################################
 ############ SALES TABLE ##################
@@ -83,7 +99,7 @@ def search_car_query(branch, field, value):
 #create 'sales' table
 def create_sales_table_query(branch):
     return f"""
-    CREATE TABLE IF NOT EXISTS sales_{branch} (
+    CREATE TABLE IF NOT EXISTS {"sales_"+branch} (
         transaction_id INT AUTO_INCREMENT PRIMARY KEY,
         date_time DATETIME NOT NULL,
         branch VARCHAR(50) NOT NULL,
@@ -97,17 +113,17 @@ def create_sales_table_query(branch):
 #add sale
 def add_sale_query(branch, date_time, brand, model, price, units):
     return f"""
-    INSERT INTO sales_{branch} (date_time, branch, brand, model, price, units)
+    INSERT INTO {"sales_"+branch} (date_time, branch, brand, model, price, units)
     VALUES ('{date_time}', '{branch}', '{brand}', '{model}', {price}, {units});
     """
 
 #remove sale
 def remove_sale_query(branch, transaction_id):
-    return f"DELETE FROM sales_{branch} WHERE transaction_id = {transaction_id};"
+    return f"DELETE FROM {"sales_"+branch} WHERE transaction_id = {transaction_id};"
 
-#search sale
-def search_sale_query(branch, field, value):
-    return f"SELECT * FROM sales_{branch} WHERE {field} = '{value}';"
+#get all sales fro branch
+def search_sales_by_branch_query(branch):
+    return f"SELECT * FROM {"sales_"+branch};"
 
 
 
