@@ -55,6 +55,13 @@ class Database:
             self.close_connection(db_connection)  # 🔹 Close only once at the end
 
 
+    def count_total_tables(self):
+        db_connection, cursor = self.establish_database_connection()
+        cursor.execute(queries.count_tables_query())
+        result = cursor.fetchone()[0]
+        return result
+
+
     def table_exists(self, branch):
         db_connection, cursor = self.establish_database_connection()
 
@@ -67,10 +74,10 @@ class Database:
         return result is not None  # Return True if the table exists, False otherwise
 
 
-    def add_car(self, branch, brand, model, car_type, color, price, min_price, stock):
+    def add_car(self, branch, brand, model, car_type, color, price):
         db_connection, cursor = self.establish_database_connection()
         if self.table_exists(branch):
-            cursor.execute(queries.add_car_query(branch, brand, model, car_type, color, price, min_price, stock))
+            cursor.execute(queries.add_car_query(branch, brand, model, car_type, color, price))
             print(f"Adding {model}")
             db_connection.commit()
             self.close_connection(db_connection)
@@ -102,9 +109,9 @@ class Database:
         self.close_connection(db_connection)
         return result
 
-    def add_sales_record(self,branch, date_time, brand, model, price, units):
+    def add_sales_record(self,branch, date_time, brand, model, price):
         db_connection, cursor = self.establish_database_connection()
-        cursor.execute(queries.add_sale_query(branch, date_time, brand, model, price, units))
+        cursor.execute(queries.add_sale_query(branch, date_time, brand, model, price))
         db_connection.commit()
         self.close_connection(db_connection)
 

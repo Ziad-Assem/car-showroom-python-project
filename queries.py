@@ -9,6 +9,12 @@ def check_table_exists_query(branch):
     WHERE TABLE_NAME LIKE {"%"+branch+"%"};
 """
 
+def count_tables_query():
+    return """
+    SELECT COUNT(*) 
+    FROM INFORMATION_SCHEMA.TABLES 
+    WHERE TABLE_SCHEMA = DATABASE();
+    """
 
 
 ###########################################
@@ -63,17 +69,15 @@ def create_cars_table_query(branch):
         model VARCHAR(255) NOT NULL,
         type VARCHAR(50) NOT NULL,
         color VARCHAR(50) NOT NULL,
-        price DECIMAL(10,2) NOT NULL,
-        min_price DECIMAL(10,2) NOT NULL,
-        stock INT NOT NULL
+        price DECIMAL(10,2) NOT NULL
     );
     """
 
 #add car
-def add_car_query(branch, brand, model, car_type, color, price, min_price, stock):
+def add_car_query(branch, brand, model, car_type, color, price):
     return f"""
-    INSERT INTO {"cars_"+branch} (brand, model, type, color, price, min_price, stock)
-    VALUES ('{brand}', '{model}', '{car_type}', '{color}', {price}, {min_price}, {stock});
+    INSERT INTO {"cars_"+branch} (brand, model, type, color, price)
+    VALUES ('{brand}', '{model}', '{car_type}', '{color}', {price});
     """
 
 #get all cars
@@ -105,16 +109,15 @@ def create_sales_table_query(branch):
         branch VARCHAR(50) NOT NULL,
         brand VARCHAR(50) NOT NULL,
         model VARCHAR(50) NOT NULL,
-        price DECIMAL(10,2) NOT NULL,
-        units INT NOT NULL
+        price DECIMAL(10,2) NOT NULL
     );
     """
 
 #add sale
-def add_sale_query(branch, date_time, brand, model, price, units):
+def add_sale_query(branch, date_time, brand, model, price):
     return f"""
-    INSERT INTO {"sales_"+branch} (date_time, branch, brand, model, price, units)
-    VALUES ('{date_time}', '{branch}', '{brand}', '{model}', {price}, {units});
+    INSERT INTO {"sales_"+branch} (date_time, branch, brand, model, price)
+    VALUES ('{date_time}', '{branch}', '{brand}', '{model}', {price});
     """
 
 #remove sale
