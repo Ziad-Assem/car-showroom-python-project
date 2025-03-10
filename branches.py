@@ -6,11 +6,14 @@ from beautifultable import BeautifulTable
 class Branch:
 
     def __init__(self, branch):
-        self.db=Database()
-        self.db.create_branch(branch)
+        self.db = Database()
+        if self.first_run_check() == 1 or branch != 'smouha':
+            self.db.create_branch(branch)
 
     def add_branch(self, branch):
         self.db.create_branch(branch)
+
+    def add_user(self,first_name, last_name, username, password, privilege, branch):
 
     def add_car(self, branch, brand, model, car_type, color, price):
         self.db.add_car(branch, brand, model, car_type, color, price)
@@ -50,6 +53,15 @@ class Branch:
             table.rows.append([car_id, brand, model, category, color, price])
 
         return table
+
+    def check_user(self,username, password):
+        result = self.db.search_user(username, password)
+        if result[0][0] == username and result[0][1] == password:
+            print(f"Welcome back {username}\n")
+            return (username, result[0][2])
+        else:
+            print(f"Wrong info please try again!{result}")
+            return (result[0], result[1])
 
     def first_run_check(self):
         count = self.db.count_total_tables()

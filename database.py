@@ -25,15 +25,21 @@ class Database:
             print("Couldn't add a new user! please try again!")
 
     def search_user(self, username, password):
+        outcome=()
         try:
             db_connection, cursor= self.establish_database_connection()
             cursor.execute(queries.verify_user_query(username, password))
-            result = cursor.fetchall()
-
+            outcome = cursor.fetchall()
             self.close_connection(db_connection)
-            return result
-        finally:
-            print("Couldn't find user!, please try again!")
+
+            if len(outcome)==0:
+                return ('none', 'none', 'none')
+            else:
+                self.close_connection(db_connection)
+                return outcome
+
+        except Exception as e:
+            print(f"Couldn't find user!, please try again! {e}")
 
     def create_branch(self, branch):
         db_connection, cursor = self.establish_database_connection()

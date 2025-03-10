@@ -2,9 +2,10 @@
 from branches import Branch
 from  users import User
 import functions
+import constants
 
 
-# sodo_branch=Branch("sodo")
+# smouha_branch=Branch("smouha")
 #
 # # sodo_branch.add_car("sodo", "Toyota", "Corolla", "Sedan", "White", 25000.00)
 # #
@@ -28,5 +29,6 @@ import functions
 #######################################################################
 # count = sodo_branch.first_run_check()
 # print(f"Number of tables in DB: {count}")
+smouha_branch=Branch("smouha")
 functions.welcome_message()
-functions.main_login()
+functions.main_login(smouha_branch, constants._FIRST_BRANCH)

@@ -53,7 +53,7 @@ def update_user_query(username, field, new_value):
 
 #search user for login purposes
 def verify_user_query(username, password):
-    return f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}';"
+    return f"SELECT username, password, privilege FROM users WHERE username = '{username}' AND password = '{password}';"
 
 
 ###########################################
