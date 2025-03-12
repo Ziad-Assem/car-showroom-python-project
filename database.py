@@ -163,3 +163,4 @@ class Database:
 
     def close_connection(self, db_connection):
         db_connection.close()
+
