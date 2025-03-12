@@ -21,35 +21,52 @@ class Database:
             cursor.execute(queries.add_user_query(first_name, last_name, username, password, privilege, branch))
             db_connection.commit()
             self.close_connection(db_connection)
-        finally:
+        except Exception as e:
             print("Couldn't add a new user! please try again!")
 
-    def search_user(self, username, password):
+    def search_user(self, username, password=None):
         outcome=()
-        try:
-            db_connection, cursor= self.establish_database_connection()
-            cursor.execute(queries.verify_user_query(username, password))
-            outcome = cursor.fetchall()
-            self.close_connection(db_connection)
 
-            if len(outcome)==0:
-                return ('none', 'none', 'none')
-            else:
+        if password is not None:
+            try:
+                db_connection, cursor= self.establish_database_connection()
+                cursor.execute(queries.verify_user_query(username, password))
+                outcome = cursor.fetchall()
                 self.close_connection(db_connection)
-                return outcome
 
-        except Exception as e:
-            print(f"Couldn't find user!, please try again! {e}")
+                if len(outcome)==0:
+                    return ('none', 'none', 'none')
+                else:
+                    self.close_connection(db_connection)
+                    return outcome
+
+            except Exception as e:
+                print(f"Couldn't find user!, please try again! {e}")
+
+        else:
+            try:
+                db_connection, cursor= self.establish_database_connection()
+                cursor.execute(queries.verify_user_query(username))
+                outcome = cursor.fetchall()
+                self.close_connection(db_connection)
+
+                if len(outcome)==0:
+                    return False #returns false when that username is not in the db and can be created/added
+                else:
+                    return True #returns true if username already exists
+
+            except Exception as e:
+                print(f"Couldn't find user!, please try again! {e}")
 
     def create_branch(self, branch):
         db_connection, cursor = self.establish_database_connection()
 
         try:
-            if not self.table_exists(branch):  # 🔹 Corrected logic: Proceed only if branch doesn't exist
+            if not self.table_exists(branch):  # proceed only if branch doesn't exist
                 cursor.execute(queries.create_cars_table_query(branch))
-                cursor.execute(queries.create_sales_table_query(branch))  # 🔹 Run both in the same session
+                cursor.execute(queries.create_sales_table_query(branch))  # run both in the same session
 
-                db_connection.commit()  # 🔹 Save changes before closing
+                db_connection.commit()  # save changes before closing
                 print(f"Branch '{branch}' created successfully!")
             else:
                 print("Can't create this branch as it already exists!")
@@ -95,7 +112,6 @@ class Database:
     def remove_car(self, branch, car_id):
         db_connection, cursor = self.establish_database_connection()
         cursor.execute(queries.delete_car_query(branch, car_id))
-        print("Car was sold successfully!")
         db_connection.commit()
         self.close_connection(db_connection)
 
@@ -113,6 +129,20 @@ class Database:
         result = cursor.fetchall()
 
         self.close_connection(db_connection)
+        return result
+
+    def get_all_branch_cars(self):
+        result=[]
+        db_connection, cursor = self.establish_database_connection()
+        cursor.execute(queries.get_all_branch_cars_tables_query())
+        tables = [table[0] for table in cursor.fetchall()]
+        print(f"{tables} with len: {len(tables)}")
+        for branch in tables:
+            # branch_name = branch.replace("cars_", "", 1)
+            print(f"current branch: {branch}")
+            cursor.execute(queries.get_all_branch_cars_query(branch))
+            result.append(cursor.fetchall())
+
         return result
 
     def add_sales_record(self,branch, date_time, brand, model, price):

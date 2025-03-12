@@ -52,9 +52,11 @@ def update_user_query(username, field, new_value):
 
 
 #search user for login purposes
-def verify_user_query(username, password):
-    return f"SELECT username, password, privilege FROM users WHERE username = '{username}' AND password = '{password}';"
-
+def verify_user_query(username, password=None):
+    if password is not None:
+        return f"SELECT username, password, privilege, branch FROM users WHERE username = '{username}' AND password = '{password}';"
+    else:
+        return f"SELECT username FROM users WHERE username = '{username}';"
 
 ###########################################
 ############ CAR TABLE ####################
@@ -69,20 +71,21 @@ def create_cars_table_query(branch):
         model VARCHAR(255) NOT NULL,
         type VARCHAR(50) NOT NULL,
         color VARCHAR(50) NOT NULL,
-        price DECIMAL(10,2) NOT NULL
+        price DECIMAL(10,2) NOT NULL,
+        branch VARCHAR(50) NOT NULL
     );
     """
 
 #add car
 def add_car_query(branch, brand, model, car_type, color, price):
     return f"""
-    INSERT INTO {"cars_"+branch} (brand, model, type, color, price)
-    VALUES ('{brand}', '{model}', '{car_type}', '{color}', {price});
+    INSERT INTO {"cars_"+branch} (brand, model, type, color, price, branch)
+    VALUES ('{brand}', '{model}', '{car_type}', '{color}', {price}, '{branch}');
     """
 
 #get all cars
 def get_all_cars_query(branch):
-    return f"SELECT * FROM {"cars_"+branch};"
+    return f"SELECT id, brand, model, type, color, price FROM {"cars_"+branch};"
 
 #delete car
 def delete_car_query(branch, car_id):
@@ -90,11 +93,17 @@ def delete_car_query(branch, car_id):
 
 #search car
 def search_car_query(branch, field, value):
-    return f"SELECT * FROM {"cars_"+branch} WHERE {field} = '{value}';"
+    return f"SELECT id, brand, model, type, color, price FROM {"cars_"+branch} WHERE {field} = '{value}';"
 
 #search car by id
 def get_car_by_id_query(branch, car_id):
-    return f"SELECT * FROM cars_{branch} WHERE id = {car_id};"
+    return f"SELECT id, brand, model, type, color, price FROM {"cars_"+branch} WHERE id = {car_id};"
+
+def get_all_branch_cars_tables_query():
+    return "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'cars_%';"
+
+def get_all_branch_cars_query(branch):
+    return f"SELECT * FROM {branch};"
 
 ###########################################
 ############ SALES TABLE ##################
@@ -126,7 +135,8 @@ def remove_sale_query(branch, transaction_id):
 
 #get all sales fro branch
 def search_sales_by_branch_query(branch):
-    return f"SELECT * FROM {"sales_"+branch};"
+    return f"SELECT transaction_id, date_time, branch, brand, model, price FROM {"sales_"+branch};"
+
 
 
 
