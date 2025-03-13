@@ -1,6 +1,5 @@
 #####TESTING DB FUNCTIONS#######
 from branches import Branch
-from  users import User
 import functions
 import constants
 
