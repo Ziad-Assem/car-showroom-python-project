@@ -1,5 +1,11 @@
+import time
 import functions
 import constants
+import importlib
+
+functions.generate_constants('../config/config.yaml')
+time.sleep(1)
+importlib.reload(constants)  # Reload in case it was just created
 
 branches_objects={}
 

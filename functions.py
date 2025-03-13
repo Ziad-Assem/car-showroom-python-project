@@ -1,5 +1,25 @@
 from time import sleep
 from branches import Branch
+import yaml
+
+
+def generate_constants(config_path: str, output_path: str = "constants.py"):
+    """Reads a YAML config file and writes the extracted constants to constants.py."""
+
+    with open(config_path, "r") as file:
+        config = yaml.safe_load(file)
+
+    constants = {
+        "_DB_HOST": config.get("_DB_HOST", ""),
+        "_DB_USER": config.get("_DB_USER", ""),
+        "_DB_PASSWORD": config.get("_DB_PASSWORD", ""),
+        "_DB_NAME": config.get("_DB_NAME", ""),
+        "_FIRST_BRANCH": config.get("_FIRST_BRANCH", ""),
+    }
+
+    with open(output_path, "w") as file:
+        for key, value in constants.items():
+            file.write(f'{key} = "{value}"\n')
 
 def welcome_message():
     """Prints a welcome message."""
