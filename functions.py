@@ -28,12 +28,25 @@ def welcome_message():
     print("===================================")
 
 def create_branch(branch_input=None):
-    branch_input = input("Enter new branch name: ")  # Get user input
+    if branch_input is None:
+        branch_input = input("Enter new branch name: ")  # Get user input
     temp_obj = Branch(branch_input)  # Create Branch object
     return branch_input, temp_obj  # Return both values
 
+def main_menu():
+    while True:
+        choice = int(input("1️⃣ Log in\n2️⃣ Exit\nChoice: "))
+        if choice==1:
+            break
+        elif choice==2:
+            exit(0)
+        else:
+            print("\nIncorrect choice, please try again!\n")
+
+
 def main_login(branch_obj):
     while True:
+        main_menu()
         print("Please input the following to login:\n")
         username=input("Username: ")
         password=input("Password: ")
